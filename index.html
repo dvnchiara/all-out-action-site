@@ -3,11 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <title>All-Out Action - Ep1</title>
+
+  <!-- ✅ Google Fonts: Montserrat -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+
   <style>
     body {
       background: #0f0f0f;
       color: white;
-      font-family: sans-serif;
+      font-family: 'Montserrat', sans-serif;
       text-align: center;
       padding: 2rem;
     }
@@ -25,50 +29,77 @@
       border-radius: 10px;
     }
 
-    .quality-wrapper {
-      position: absolute;
-      bottom: 16px;
-      right: 16px;
-      z-index: 10;
-      background: rgba(28, 28, 28, 0.8);
-      border-radius: 6px;
-      padding: 6px 10px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      border: 1px solid #444;
-      box-shadow: 0 0 12px rgba(168, 85, 247, 0.2);
-    }
-
-    .quality-wrapper:hover {
-      background: rgba(28, 28, 28, 1);
-    }
-
-    #qualitySelect {
-      background: transparent;
-      color: white;
-      border: none;
+    /* ⚙ Quality Button */
+    .quality-btn {
+      margin-top: 12px;
+      background-color: #1f1f1f;
+      color: #a855f7;
+      border: 1px solid #a855f7;
+      padding: 8px 16px;
       font-size: 14px;
+      border-radius: 6px;
       cursor: pointer;
-      appearance: none;
-      outline: none;
+      transition: background 0.2s;
     }
 
-    /* FIX: Ensure dropdown options are visible (white on dark) */
-    #qualitySelect option {
-      background-color: #1c1c1c !important;
-      color: white !important;
+    .quality-btn:hover {
+      background-color: #2d2d2d;
     }
 
-    .gear {
-      font-size: 16px;
+    /* 🔲 Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal {
+      background: #1c1c1c;
+      padding: 24px 32px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+      text-align: left;
+    }
+
+    .modal h2 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      font-size: 18px;
       color: #a855f7;
     }
 
-    a {
-      color: #aaa;
-      margin-top: 20px;
-      display: inline-block;
+    .quality-option {
+      background: none;
+      border: none;
+      color: white;
+      padding: 6px 0;
+      font-size: 15px;
+      text-align: left;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .quality-option:hover {
+      color: #a855f7;
+    }
+
+    .close-modal {
+      margin-top: 16px;
+      color: #888;
+      font-size: 14px;
+      text-align: right;
+      cursor: pointer;
+    }
+
+    .close-modal:hover {
+      color: #ccc;
     }
   </style>
 </head>
@@ -82,56 +113,70 @@
       poster="https://i.imgur.com/rSMssg6.jpeg"
     ></video>
 
-    <!-- Floating gear + dropdown -->
-    <div class="quality-wrapper" id="qualityWrapper" style="display: none;">
-      <span class="gear">⚙</span>
-      <select id="qualitySelect" aria-label="Quality"></select>
+    <!-- ✅ Quality Button -->
+    <button class="quality-btn" onclick="openModal()">⚙ Quality</button>
+  </div>
+
+  <!-- 🔲 Quality Modal -->
+  <div class="modal-overlay" id="qualityModal">
+    <div class="modal">
+      <h2>Select Quality</h2>
+      <div id="qualityOptions"></div>
+      <div class="close-modal" onclick="closeModal()">Close</div>
     </div>
   </div>
 
-  <a href="../index.html">← Back to Library</a>
-
+  <!-- ✅ HLS -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script>
     const video = document.getElementById('video');
-    const qualitySelect = document.getElementById('qualitySelect');
-    const qualityWrapper = document.getElementById('qualityWrapper');
+    const modal = document.getElementById('qualityModal');
+    const qualityOptions = document.getElementById('qualityOptions');
     const videoSrc = 'https://stream.mux.com/U6UL8eaD7Qopc2hm7oVDhZq6yZfb6F9V00FFskxVKIB00.m3u8';
 
+    let hls;
+
     if (Hls.isSupported()) {
-      const hls = new Hls();
+      hls = new Hls();
       hls.loadSource(videoSrc);
       hls.attachMedia(video);
 
       hls.on(Hls.Events.MANIFEST_PARSED, function () {
         const levels = hls.levels;
-        qualitySelect.innerHTML = '';
+        qualityOptions.innerHTML = '';
 
+        // Add each quality option
         levels.forEach((level, index) => {
-          const option = document.createElement('option');
-          option.value = index;
-          option.text = `${level.height}p`;
-          qualitySelect.appendChild(option);
+          const btn = document.createElement('button');
+          btn.className = 'quality-option';
+          btn.textContent = `${level.height}p`;
+          btn.onclick = () => {
+            hls.currentLevel = index;
+            closeModal();
+          };
+          qualityOptions.appendChild(btn);
         });
 
-        // Add "Auto"
-        const autoOption = document.createElement('option');
-        autoOption.value = -1;
-        autoOption.text = 'Auto';
-        qualitySelect.appendChild(autoOption);
-        qualitySelect.value = -1;
-
-        qualitySelect.addEventListener('change', function () {
-          const selected = parseInt(this.value);
-          hls.currentLevel = selected;
-        });
-
-        // Show the floating quality dropdown
-        qualityWrapper.style.display = 'flex';
+        // Auto option
+        const autoBtn = document.createElement('button');
+        autoBtn.className = 'quality-option';
+        autoBtn.textContent = 'Auto';
+        autoBtn.onclick = () => {
+          hls.currentLevel = -1;
+          closeModal();
+        };
+        qualityOptions.appendChild(autoBtn);
       });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = videoSrc;
-      qualityWrapper.style.display = 'none'; // Hide in Safari
+    }
+
+    function openModal() {
+      modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+      modal.style.display = 'none';
     }
   </script>
 </body>
