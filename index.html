@@ -54,6 +54,12 @@
       outline: none;
     }
 
+    /* FIX: Ensure dropdown options are visible (white on dark) */
+    #qualitySelect option {
+      background-color: #1c1c1c !important;
+      color: white !important;
+    }
+
     .gear {
       font-size: 16px;
       color: #a855f7;
@@ -78,7 +84,7 @@
 
     <!-- Floating gear + dropdown -->
     <div class="quality-wrapper" id="qualityWrapper" style="display: none;">
-      <span class="gear">⚙️</span>
+      <span class="gear">⚙</span>
       <select id="qualitySelect" aria-label="Quality"></select>
     </div>
   </div>
