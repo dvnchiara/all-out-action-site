@@ -24,13 +24,28 @@
       border-radius: 10px;
     }
 
-    select {
-      margin-top: 10px;
-      background: #1c1c1c;
+    #qualitySelect {
+      margin-top: 14px;
+      background-color: #1c1c1c;
       color: #fff;
-      padding: 5px;
-      border: none;
-      border-radius: 4px;
+      padding: 8px 12px;
+      border: 1px solid #444;
+      border-radius: 6px;
+      font-size: 14px;
+      appearance: none;
+      outline: none;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(144, 0, 255, 0.25);
+      transition: all 0.2s ease;
+    }
+
+    #qualitySelect:hover {
+      border-color: #a855f7;
+    }
+
+    #qualitySelect:focus {
+      border-color: #a855f7;
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
     }
 
     a {
@@ -44,9 +59,13 @@
   <h1>All-Out Action - Episode 1</h1>
 
   <div id="player-container">
-    <video id="video" controls poster="https://i.imgur.com/rSMssg6.jpeg"></video>
+    <video
+      id="video"
+      controls
+      poster="https://i.imgur.com/rSMssg6.jpeg"
+    ></video>
     <br />
-    <select id="qualitySelect"></select>
+    <select id="qualitySelect" aria-label="Quality"></select>
   </div>
 
   <a href="../index.html">← Back to Library</a>
@@ -73,7 +92,7 @@
           qualitySelect.appendChild(option);
         });
 
-        // Auto: use adaptive
+        // Add "Auto"
         const autoOption = document.createElement('option');
         autoOption.value = -1;
         autoOption.text = 'Auto';
@@ -81,13 +100,14 @@
         qualitySelect.value = -1;
 
         qualitySelect.addEventListener('change', function () {
-          const level = parseInt(this.value);
-          hls.currentLevel = level;
+          const selected = parseInt(this.value);
+          hls.currentLevel = selected;
         });
       });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      // Safari fallback
       video.src = videoSrc;
+      // Optionally hide the quality dropdown on Safari
+      qualitySelect.style.display = 'none';
     }
   </script>
 </body>
