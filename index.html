@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>All-Out Action - Ep1</title>
+  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <style>
     body {
       background: #0f0f0f;
@@ -26,13 +27,25 @@
   <h1>All-Out Action - Episode 1</h1>
 
   <video
+    id="video"
     controls
     poster="https://i.imgur.com/rSMssg6.jpeg"
     preload="auto"
-  >
-    <source src="https://stream.mux.com/U6UL8eaD7Qopc2hm7oVDhZq6yZfb6F9V00FFskxVKIB00.m3u8" type="application/x-mpegURL" />
-    Your browser does not support the video tag or HLS playback.
-  </video>
+  ></video>
+
+  <script>
+    const video = document.getElementById('video');
+    const videoSrc = "https://stream.mux.com/U6UL8eaD7Qopc2hm7oVDhZq6yZfb6F9V00FFskxVKIB00.m3u8";
+
+    if (Hls.isSupported()) {
+      const hls = new Hls();
+      hls.loadSource(videoSrc);
+      hls.attachMedia(video);
+    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+      // Safari
+      video.src = videoSrc;
+    }
+  </script>
 
   <p>Enjoy the episode!</p>
 </body>
