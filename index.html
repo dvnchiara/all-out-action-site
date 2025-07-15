@@ -29,7 +29,6 @@
       border-radius: 10px;
     }
 
-    /* ⚙ Quality Button */
     .quality-btn {
       margin-top: 12px;
       background-color: #1f1f1f;
@@ -46,7 +45,6 @@
       background-color: #2d2d2d;
     }
 
-    /* 🔲 Modal */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -104,7 +102,7 @@
   </style>
 </head>
 <body>
-  <h1>All-Out Action - Episode 1</h1>
+  <h1>All-Out Action S1 - Episode 1</h1>
 
   <div id="player-container">
     <video
@@ -113,11 +111,9 @@
       poster="https://i.imgur.com/rSMssg6.jpeg"
     ></video>
 
-    <!-- ✅ Quality Button -->
     <button class="quality-btn" id="qualityButton" onclick="openModal()">⚙ Quality</button>
   </div>
 
-  <!-- 🔲 Quality Modal -->
   <div class="modal-overlay" id="qualityModal">
     <div class="modal">
       <h2>Select Quality</h2>
@@ -126,14 +122,15 @@
     </div>
   </div>
 
-  <!-- ✅ HLS Streaming -->
   <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
   <script>
     const video = document.getElementById('video');
     const modal = document.getElementById('qualityModal');
     const qualityOptions = document.getElementById('qualityOptions');
     const qualityButton = document.getElementById('qualityButton');
-    const videoSrc = 'https://stream.mux.com/U6UL8eaD7Qopc2hm7oVDhZq6yZfb6F9V00FFskxVKIB00.m3u8';
+    
+    // ✅ Updated video source
+    const videoSrc = 'https://stream.mux.com/Pz02kdWVW7M302YW34Mc1eDjBbmUeWyGtPXYz400XtgfJo.m3u8';
 
     let hls;
 
